@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"github.com/rafaelthomazi/qa/qa/service"
 	"net/http"
 
 	kithttp "github.com/go-kit/kit/transport/http"
@@ -13,8 +14,9 @@ const (
 	basePath = "/api/qa"
 )
 
-// NewServer starts and returns the REST server instance
-func NewServer(endpoints Endpoints, port string, logger *zap.Logger, errors chan error) *http.Server {
+// NewServer creates a REST server instance
+func NewServer(svc service.Service, port string, logger *zap.Logger) *http.Server {
+	endpoints := makeEndpoints(svc, logger)
 	r := makeHandlers(endpoints)
 
 	server := &http.Server{
@@ -24,16 +26,10 @@ func NewServer(endpoints Endpoints, port string, logger *zap.Logger, errors chan
 				[]string{"Content-Type"},
 			),
 			handlers.AllowedMethods(
-				[]string{"GET", "POST", "DELETE", "PUT"},
+				[]string{"GET", "POST", "PUT", "DELETE"},
 			),
 		)(r),
 	}
-
-	go func() {
-		errors <- server.ListenAndServe()
-	}()
-
-	logger.Info("HTTP service started listening", zap.String("port", port))
 
 	return server
 }

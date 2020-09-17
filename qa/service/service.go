@@ -22,15 +22,15 @@ type service struct {
 }
 
 // NewService ...
-func NewService(logger *zap.Logger) Service {
-	questionsDAO, err := dao.NewQuestionsDAO("", logger)
+func NewService(cfg *Config) Service {
+	questionsDAO, err := dao.NewQuestionsDAO(cfg.DAO)
 	if err != nil {
-		logger.Error("Error creating Questions DAO", zap.Error(err))
+		cfg.Logger.Error("Error creating Questions DAO", zap.Error(err))
 		return nil
 	}
 
 	return &service{
 		questionsDAO: questionsDAO,
-		logger:       logger,
+		logger:       cfg.Logger,
 	}
 }

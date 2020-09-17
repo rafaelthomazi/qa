@@ -41,7 +41,7 @@ func decodeUpdateQuestionRequest(_ context.Context, r *http.Request) (interface{
 		return models.Question{}, fmt.Errorf("client: %s", err.Error())
 	}
 
-	if id != req.ID {
+	if id != req.ID.Hex() {
 		return models.Question{}, errors.New("client: URI and Body payload ids do not match")
 	}
 

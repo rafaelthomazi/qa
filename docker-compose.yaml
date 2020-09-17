@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+
+  api:
+    build:
+      context: .
+      target: runtime
+    ports:
+      - 8080:8080
+    environment:
+      HTTP_PORT: 8080
+      MONGODB_DATABASE: qa
+      MONGODB_URI: mongodb://root:secret!@mongodb:27017
+    depends_on:
+      - mongodb
+    restart: always
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    hostname: mongodb
+    environment:
+      MONGO_INITDB_DATABASE: qa
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret!
+    ports:
+      - 27017:27017
+    restart: always

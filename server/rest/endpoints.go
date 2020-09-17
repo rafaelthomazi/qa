@@ -18,8 +18,7 @@ type Endpoints struct {
 	DeleteQuestionEndpoint endpoint.Endpoint
 }
 
-// New returns all callable service actions available to REST server
-func New(svc service.Service, logger *zap.Logger) Endpoints {
+func makeEndpoints(svc service.Service, logger *zap.Logger) Endpoints {
 	return Endpoints{
 		GetQuestionEndpoint:    makeGetQuestionEndpoint(svc, logger),
 		GetQuestionsEndpoint:   makeGetQuestionsEndpoint(svc, logger),
