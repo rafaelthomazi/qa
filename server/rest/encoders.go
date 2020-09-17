@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	responseHeaderJSON = "application/json; charset=utf-8"
+	responseHeaderJSON = "application/json"
 )
 
 func encodeResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
@@ -30,7 +30,7 @@ func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 
 func decodeError(err string) (int, string) {
 	switch {
-	case strings.HasPrefix(err, "client"):
+	case strings.HasPrefix(err, "client:"):
 		return http.StatusBadRequest, strings.TrimPrefix(err, "client: ")
 	default:
 		return http.StatusInternalServerError, err

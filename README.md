@@ -4,13 +4,29 @@
 1. API service: `go`
 2. Database: `MongoDB`
 
+## Testing the application
+1. Run static analysis tool (`go vet`) 
+```
+make vet
+```
+
+2. Check for coding style mistakes (`golint`)
+```
+make lint
+```
+
+3. Run unittests
+```
+make test
+```
+
 ## Run
 1. Running API and Database
 ```
 docker-compose up --build -d
 ```
 
-2. Checking logs
+2. Checking API logs
 ```
 docker-compose logs -f api
 ```

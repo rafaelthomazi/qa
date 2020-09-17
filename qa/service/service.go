@@ -7,7 +7,9 @@ import (
 	"go.uber.org/zap"
 )
 
-// Service represents the interface "qa" service will implements
+//go:generate mockgen -source=service.go -destination=service_mock.go -package=service
+
+// Service represents the service interface
 type Service interface {
 	GetQuestion(ctx context.Context, id string) (models.Question, error)
 	GetQuestions(ctx context.Context) ([]models.Question, error)
@@ -21,11 +23,11 @@ type service struct {
 	logger       *zap.Logger
 }
 
-// NewService ...
+// NewService instantiates a new Service object
 func NewService(cfg *Config) Service {
 	questionsDAO, err := dao.NewQuestionsDAO(cfg.DAO)
 	if err != nil {
-		cfg.Logger.Error("Error creating Questions DAO", zap.Error(err))
+		cfg.Logger.Error("Error creating QuestionsDAO", zap.Error(err))
 		return nil
 	}
 

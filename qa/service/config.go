@@ -5,6 +5,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// Config represents the Service parameters
 type Config struct {
 	HTTPPort string
 	DAO      dao.Config

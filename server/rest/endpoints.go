@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// Endpoints is the complete list of all service calls that can be wired up to HTTP or GRPC
+// Endpoints is the complete list of all service calls that can be wired up to HTTP
 type Endpoints struct {
 	GetQuestionEndpoint    endpoint.Endpoint
 	GetQuestionsEndpoint   endpoint.Endpoint

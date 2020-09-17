@@ -14,10 +14,13 @@ import (
 )
 
 const (
+	// QuestionsCollection is the name of default collection used to store Questions
 	QuestionsCollection = "questions"
 )
 
-// Questions
+//go:generate mockgen -source=questions.go -destination=questions_mock.go -package=dao
+
+// Questions represents the data access interface to Question object
 type Questions interface {
 	GetQuestion(id string) (models.Question, error)
 	GetQuestions() ([]models.Question, error)
@@ -26,13 +29,14 @@ type Questions interface {
 	DeleteQuestion(id string) error
 }
 
+// QuestionsDAO implements the data access interface to Question object
 type QuestionsDAO struct {
 	client     *mongo.Client
 	collection *mongo.Collection
 	logger     *zap.Logger
 }
 
-// NewQuestionsDAO ..
+// NewQuestionsDAO connects to the MongoDB and instantiates a new QuestionDAO object
 func NewQuestionsDAO(cfg Config) (*QuestionsDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -56,11 +60,14 @@ func NewQuestionsDAO(cfg Config) (*QuestionsDAO, error) {
 	}, nil
 }
 
+// GetQuestion returns a single Question
 func (d *QuestionsDAO) GetQuestion(id string) (models.Question, error) {
 	logger := d.logger.Named("QuestionsDAO.GetQuestion").With(zap.String("id", id))
 
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
+
+	logger.Info("Getting question")
 
 	oid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -81,11 +88,14 @@ func (d *QuestionsDAO) GetQuestion(id string) (models.Question, error) {
 	return question, nil
 }
 
+// GetQuestions returns all Questions in the database
 func (d *QuestionsDAO) GetQuestions() ([]models.Question, error) {
 	logger := d.logger.Named("QuestionsDAO.GetQuestions")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
+
+	logger.Info("Getting questions")
 
 	cur, err := d.collection.Find(ctx, bson.D{})
 	if err != nil {
@@ -111,13 +121,16 @@ func (d *QuestionsDAO) GetQuestions() ([]models.Question, error) {
 	return questions, nil
 }
 
+// CreateQuestion inserts a new Question in the database
 func (d *QuestionsDAO) CreateQuestion(q models.Question) (models.Question, error) {
+	q.ID = primitive.NewObjectID()
+
 	logger := d.logger.Named("QuestionsDAO.CreateQuestion").With(zap.Any("question", q))
 
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
-	q.ID = primitive.NewObjectID()
+	logger.Info("Inserting question")
 
 	_, err := d.collection.InsertOne(ctx, q)
 	if err != nil {
@@ -127,6 +140,7 @@ func (d *QuestionsDAO) CreateQuestion(q models.Question) (models.Question, error
 	return q, err
 }
 
+// UpdateQuestion updates an existing Question in the database
 func (d *QuestionsDAO) UpdateQuestion(q models.Question) (models.Question, error) {
 	logger := d.logger.Named("QuestionsDAO.UpdateQuestion")
 
@@ -135,6 +149,8 @@ func (d *QuestionsDAO) UpdateQuestion(q models.Question) (models.Question, error
 
 	filter := bson.M{"_id": q.ID}
 	update := bson.M{"$set": q}
+
+	logger.Info("Updating question")
 
 	_, err := d.collection.UpdateOne(ctx, filter, update)
 	if err != nil {
@@ -145,11 +161,14 @@ func (d *QuestionsDAO) UpdateQuestion(q models.Question) (models.Question, error
 
 }
 
+// DeleteQuestion deletes an existing Question from the database
 func (d *QuestionsDAO) DeleteQuestion(id string) error {
 	logger := d.logger.Named("QuestionsDAO.DeleteQuestion")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+
+	logger.Info("Deleting question")
 
 	oid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
