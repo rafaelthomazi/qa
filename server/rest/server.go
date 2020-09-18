@@ -39,30 +39,35 @@ func makeHandlers(endpoints Endpoints) *mux.Router {
 		endpoints.GetQuestionEndpoint,
 		decodeIDParamRequest,
 		encodeResponse,
+		kithttp.ServerErrorEncoder(encodeError),
 	)
 
 	getQuestionsHandler := kithttp.NewServer(
 		endpoints.GetQuestionsEndpoint,
 		decodeBlankRequest,
 		encodeResponse,
+		kithttp.ServerErrorEncoder(encodeError),
 	)
 
 	createQuestionHandler := kithttp.NewServer(
 		endpoints.CreateQuestionEndpoint,
 		decodeQuestionRequest,
 		encodeResponse,
+		kithttp.ServerErrorEncoder(encodeError),
 	)
 
 	updateQuestionHandler := kithttp.NewServer(
 		endpoints.UpdateQuestionEndpoint,
 		decodeUpdateQuestionRequest,
 		encodeResponse,
+		kithttp.ServerErrorEncoder(encodeError),
 	)
 
 	deleteQuestionHandler := kithttp.NewServer(
 		endpoints.DeleteQuestionEndpoint,
 		decodeIDParamRequest,
 		encodeResponse,
+		kithttp.ServerErrorEncoder(encodeError),
 	)
 
 	r := mux.NewRouter()

@@ -27,8 +27,8 @@ func (r QuestionResponse) Failure() error { return r.Error }
 
 // QuestionsResponse ..
 type QuestionsResponse struct {
-	Question []models.Question `json:"questions"`
-	Error    error             `json:"-"`
+	Questions []models.Question `json:"questions"`
+	Error     error             `json:"-"`
 }
 
 // Failure returns the error if any
