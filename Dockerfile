@@ -3,8 +3,6 @@ FROM golang:latest AS test
 
 WORKDIR /go/src/github.com/rafaelthomazi/qa
 
-WORKDIR /go/src/github.com/rafaelthomazi/qa
-
 COPY go.mod go.sum ./
 
 RUN go mod download
